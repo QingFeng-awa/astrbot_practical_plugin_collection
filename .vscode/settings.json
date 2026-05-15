@@ -1,0 +1,14 @@
+{
+    "yaml.schemas": {
+        "./.vscode/AstrBotPluginMetadata.json": "**/metadata.yaml"
+    },
+    "markdown.validate.enabled": false,
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "**/_conf_schema.json"
+            ],
+            "url": "./.vscode/AstrBotPluginConfig.schema.json"
+        }
+    ]
+}
