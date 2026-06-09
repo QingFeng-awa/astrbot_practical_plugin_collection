@@ -2,5 +2,8 @@
     "recommendations": [
         "ms-python.python",
         "charliermarsh.ruff"
+    ],
+    "unwantedRecommendations": [
+        "detachhead.basedpyright"
     ]
 }
