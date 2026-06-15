@@ -1,7 +1,8 @@
 {
     "recommendations": [
         "ms-python.python",
-        "charliermarsh.ruff"
+        "charliermarsh.ruff",
+        "redhat.vscode-yaml"
     ],
     "unwantedRecommendations": [
         "detachhead.basedpyright"
