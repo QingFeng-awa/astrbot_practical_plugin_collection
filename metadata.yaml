@@ -1,4 +1,4 @@
-name: astrbot_plugin_practical_collection
+name: astrbot_plugin_practical_collection # practical 和 plugin 对调位置以符合 AstrBot 插件规范的命名规则
 display_name: AstrBot 实用插件合集
 desc: AstrBot 实用插件合集。
 version: v0.1.0
