@@ -6,7 +6,10 @@ readme = "README.md"
 requires-python = ">=3.13"
 license = "AGPL-3.0-or-later"
 license-files = ["LICENSE"]
-dependencies = ["astrbot>=4.17.6"]
+dependencies = [
+    "aiosqlite>=0.22.1",
+    "astrbot>=4.17.6",
+]
 
 [dependency-groups]
 dev = ["ruff>=0.15.13"]

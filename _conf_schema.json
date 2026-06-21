@@ -1,0 +1,274 @@
+{
+    "Whitelist": {
+        "type": "object",
+        "description": "白名单配置",
+        "items": {
+            "WhitelistGroups": {
+                "type": "list",
+                "description": "白名单群聊列表",
+                "hint": "指定本插件在哪些群聊中工作，若留空则默认在所有群聊中启用。",
+                "default": [
+                    "114514"
+                ]
+            },
+            "AllowTemporaryConversationFromAllowedGroup": {
+                "type": "bool",
+                "description": "处理来自白名单群聊中的临时会话消息",
+                "hint": "是否允许来自白名单群聊的用户创建的临时会话中使用本插件。",
+                "default": false
+            },
+            "WhitelistFriends": {
+                "type": "list",
+                "description": "白名单好友列表",
+                "hint": "指定本插件在哪些私聊中工作，若留空则默认在所有群聊中启用。",
+                "default": [
+                    "114514"
+                ]
+            }
+        }
+    },
+    "GlobalEnable": {
+        "type": "bool",
+        "description": "插件全局开关",
+        "hint": "是否启用插件，关闭后插件将不会进行任何操作也不会响应任何事件。此项默认关闭以防止插件安装后被自动启动。建议在配置完所有模块后再打开。",
+        "default": false
+    },
+    "ModuleConfig": {
+        "type": "object",
+        "description": "模块配置",
+        "items": {
+            "GroupRequestReview": {
+                "type": "object",
+                "description": "加群请求审核",
+                "items": {
+                    "Enabled": {
+                        "type": "bool",
+                        "description": "模块开关",
+                        "default": true
+                    },
+                    "ReviewStrategy": {
+                        "type": "template_list",
+                        "description": "群聊审核策略配置",
+                        "templates": {
+                            "Dedicated": {
+                                "name": "专用策略",
+                                "hint": "指定特定群聊的审核策略，仅对该群聊生效，每个群聊应当仅配置一个专用策略。",
+                                "display_item": "TargetGroup",
+                                "hide_hint_in_list": true,
+                                "items": {
+                                    "TargetGroup": {
+                                        "type": "string",
+                                        "description": "策略适用群聊",
+                                        "hint": "要应用此策略群聊的群号，每个专用策略仅支持应用一个群聊。"
+                                    },
+                                    "UseBanlist": {
+                                        "type": "bool",
+                                        "description": "拒绝被封禁账号",
+                                        "hint": "直接拒绝处于封禁列表中账号的加群请求。",
+                                        "default": true
+                                    },
+                                    "TimeLimit": {
+                                        "type": "object",
+                                        "description": "加群频率限制",
+                                        "hint": "限制加群者短时间内的加群次数。",
+                                        "items": {
+                                            "Enable": {
+                                                "type": "bool",
+                                                "description": "是否启用加群频率限制",
+                                                "default": true
+                                            },
+                                            "StatisticalTime": {
+                                                "type": "int",
+                                                "description": "统计时间",
+                                                "hint": "当加群者首次加群时将开始计时，若在计时内加群次数超出单位次数上限将触发速率限制，反之若没有将重置加群次数计数。单位为分钟。",
+                                                "default": 10,
+                                                "slider": {
+                                                    "min": 1,
+                                                    "max": 60,
+                                                    "step": 1
+                                                }
+                                            },
+                                            "TotalAttempt": {
+                                                "type": "int",
+                                                "description": "单位时间内加群次数上限",
+                                                "hint": "加群者于单位时间内最多可以尝试加群多少次，超出将触发速率限制。",
+                                                "default": 3,
+                                                "slider": {
+                                                    "min": 1,
+                                                    "max": 10,
+                                                    "step": 1
+                                                }
+                                            },
+                                            "PunishmentDuration": {
+                                                "type": "int",
+                                                "description": "频率限制时长",
+                                                "hint": "加群者触发速率限制后要限制其加群的时长，单位为分钟，期间内该加群者的加群请求将被直接拒绝。",
+                                                "default": 10,
+                                                "slider": {
+                                                    "min": 1,
+                                                    "max": 60,
+                                                    "step": 1
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "LevelLimit": {
+                                        "type": "object",
+                                        "description": "等级限制配置",
+                                        "items": {
+                                            "MinLevel": {
+                                                "type": "int",
+                                                "description": "最低等级限制",
+                                                "hint": "设定加群者的 QQ 等级至少要高于多少级，设为0以禁用该功能。",
+                                                "default": 0,
+                                                "slider": {
+                                                    "min": 0,
+                                                    "max": 64,
+                                                    "step": 1
+                                                }
+                                            },
+                                            "SkipInvalidLevel": {
+                                                "type": "bool",
+                                                "description": "获取等级失败时跳过校验",
+                                                "hint": "如果获取等级失败（例如目标在资料卡中隐藏了等级）则跳过校验，若禁用此项则将拒绝其加群请求。",
+                                                "default": false
+                                            }
+                                        }
+                                    },
+                                    "Regex": {
+                                        "type": "string",
+                                        "description": "正则表达式",
+                                        "hint": "用于校验加群者填写答案的正则表达式，若校验通过将放行，反之拒绝。",
+                                        "default": ".*"
+                                    }
+                                }
+                            },
+                            "Common": {
+                                "name": "通用策略",
+                                "hint": "所有未配置专用策略的群聊均将使用该策略，该策略应当仅添加一个。",
+                                "items": {
+                                    "UseBanlist": {
+                                        "type": "bool",
+                                        "description": "拒绝被封禁账号",
+                                        "hint": "直接拒绝处于封禁列表中账号的加群请求。",
+                                        "default": true
+                                    },
+                                    "TimeLimit": {
+                                        "type": "object",
+                                        "description": "加群频率限制",
+                                        "hint": "限制加群者短时间内的加群次数。",
+                                        "items": {
+                                            "Enable": {
+                                                "type": "bool",
+                                                "description": "是否启用加群频率限制",
+                                                "default": true
+                                            },
+                                            "StatisticalTime": {
+                                                "type": "int",
+                                                "description": "统计时间",
+                                                "hint": "统计最近配置的分钟数内的加群次数。",
+                                                "default": 10,
+                                                "slider": {
+                                                    "min": 1,
+                                                    "max": 60,
+                                                    "step": 1
+                                                }
+                                            },
+                                            "TotalAttempt": {
+                                                "type": "int",
+                                                "description": "配置时间内加群次数上限",
+                                                "hint": "加群者于配置时间内最多可以尝试加群多少次，超出将触发速率限制。",
+                                                "default": 3,
+                                                "slider": {
+                                                    "min": 1,
+                                                    "max": 10,
+                                                    "step": 1
+                                                }
+                                            },
+                                            "PunishmentDuration": {
+                                                "type": "int",
+                                                "description": "频率限制时长",
+                                                "hint": "加群者触发速率限制后要限制其加群的时长，单位为分钟，期间内该加群者的加群请求将被直接拒绝。",
+                                                "default": 10,
+                                                "slider": {
+                                                    "min": 1,
+                                                    "max": 60,
+                                                    "step": 1
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "LevelLimit": {
+                                        "type": "object",
+                                        "description": "等级限制配置",
+                                        "items": {
+                                            "MinLevel": {
+                                                "type": "int",
+                                                "description": "最低等级限制",
+                                                "hint": "设定加群者的 QQ 等级至少要高于多少级，设为0以禁用该功能。",
+                                                "default": 0,
+                                                "slider": {
+                                                    "min": 0,
+                                                    "max": 64,
+                                                    "step": 1
+                                                }
+                                            },
+                                            "SkipInvalidLevel": {
+                                                "type": "bool",
+                                                "description": "获取等级失败时跳过校验",
+                                                "hint": "如果获取等级失败（例如目标在资料卡中隐藏了等级）则跳过校验，若禁用此项则将拒绝其加群请求。",
+                                                "default": false
+                                            }
+                                        }
+                                    },
+                                    "Regex": {
+                                        "type": "string",
+                                        "description": "正则表达式",
+                                        "hint": "用于校验加群者填写答案的正则表达式，若校验通过将放行，反之拒绝。",
+                                        "default": ".*"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "MessageTemplate": {
+                        "type": "object",
+                        "description": "消息模板",
+                        "items": {
+                            "RejectByBanned": {
+                                "type": "string",
+                                "description": "封禁账号拒绝时使用的理由",
+                                "hint": "当加群者处于封禁列表中时，将使用此理由拒绝其加群请求。",
+                                "default": "您已被封禁，无法加入群聊。"
+                            },
+                            "RejectByRateLimit": {
+                                "type": "string",
+                                "description": "速率限制拒绝时使用的理由",
+                                "hint": "当加群者触发速率限制时，将使用此理由拒绝其加群请求。可用占位符：{remaining_time}（频率限制剩余时间，单位为分钟，向上取整）。",
+                                "default": "您的加群请求过于频繁，请在 {remaining_time} 分钟后重试。"
+                            },
+                            "RejectByInvalidLevel": {
+                                "type": "string",
+                                "description": "无效等级拒绝时使用的理由",
+                                "hint": "当获取加群者等级失败且未选择跳过校验时，将使用此理由拒绝其加群请求。",
+                                "default": "获取你的 QQ 等级失败，请在设置内对外展示你的等级。"
+                            },
+                            "RejectByLevelLimit": {
+                                "type": "string",
+                                "description": "等级限制拒绝时使用的理由",
+                                "hint": "当加群者触发等级限制时，将使用此理由拒绝其加群请求。可用占位符：{required_level}（最低限制等级）。",
+                                "default": "您的等级低于 {required_level}，无法加入群聊。"
+                            },
+                            "RejectByRegex": {
+                                "type": "string",
+                                "description": "正则表达式拒绝时使用的理由",
+                                "hint": "当加群者填写答案未匹配正则表达式时，将使用此理由拒绝其加群请求。",
+                                "default": "您的答案不符合要求，请重新填写。"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
