@@ -60,15 +60,21 @@ class PracticalPluginCollection(Star):
             return False
         user_id = event.get_sender_id()
         group_id = event.get_group_id()
-        if user_id and group_id:  # 临时会话
-            return (
-                whitelist_config["AllowTemporaryConversationFromAllowedGroup"]
-                and group_id in whitelist_config["WhitelistGroups"]
-            )
-        elif user_id:  # 私聊
-            return user_id in whitelist_config["WhitelistFriends"]
-        elif group_id:  # 群聊
-            return group_id in whitelist_config["WhitelistGroups"]
-        else:
-            logger.warning("判断事件类型失败，将忽略此条事件。")
-            return False
+        request_type = event.get_message_type().value
+        match request_type:
+            case "GroupMessage":  # 群聊
+                return group_id in whitelist_config["WhitelistGroups"]
+            case "FriendMessage":
+                raw_message = cast(dict, event.message_obj.raw_message)
+                if raw_message.get("sub_type", "") == "group":  # 临时会话
+                    return (
+                        whitelist_config["AllowTemporaryConversationFromAllowedGroup"]
+                        and group_id in whitelist_config["WhitelistGroups"]
+                    )
+                else:  # 私聊
+                    return user_id in whitelist_config["WhitelistFriends"]
+            case _:  # 由于 aiocqhttp 不存在 OTHER_MESSAGE 类型事件，因此此处将其和其他可能的未知类型一并处理
+                logger.warning(
+                    f"判断事件类型 {request_type} 失败，这似乎不是 Onebot 11 的标准事件类型。请检查插件是否兼容当前 AstrBot / NapCat 版本。"
+                )
+                return False
