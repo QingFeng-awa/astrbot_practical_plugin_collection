@@ -35,7 +35,7 @@ def event_filter(
                 return False
         case _:  # 其他未知的神秘事件类型
             logger.warning(
-                f"检测到未知的事件子类型: {raw_message['sub_type']}，这似乎不是 Onebot 11 的标准事件类型。请检查插件是否兼容当前 AstrBot / NapCat 版本。"
+                f"检测到未知的事件子类型: {raw_message.get('sub_type', 'None')}，这似乎不是 Onebot 11 的标准事件类型。请检查插件是否兼容当前 AstrBot / NapCat 版本。"
             )
             return False
     if secondary_subtype:
