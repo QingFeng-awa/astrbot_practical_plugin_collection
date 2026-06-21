@@ -31,8 +31,7 @@ class PracticalPluginCollection(Star):
             )
         else:
             self.ban_system = await BanSystem.init(self.plugin_data_path)
-            self.group_request_log = GroupRequestLog(self.plugin_data_path)
-            await self.group_request_log.initialize()
+            self.group_request_log = await GroupRequestLog.init(self.plugin_data_path)
             logger.info("插件初始化完成。")
 
     async def terminate(self):

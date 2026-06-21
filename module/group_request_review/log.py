@@ -11,24 +11,27 @@ class GroupRequestLog:
     """数据库文件路径。"""
 
     def __init__(self, plugin_data_path: Path):
-        """初始化加群请求记录系统。
+        """**请使用 GroupRequestLog.init 方法初始化加群请求记录数据库。**"""
+        try:
+            self.plugin_data_path = plugin_data_path
+            self.db_path = self.plugin_data_path / "group_request_review" / "log.db"
+            self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        except Exception:
+            logger.exception("初始化加群请求记录数据库时发生错误。")
+
+    @classmethod
+    async def init(cls, plugin_data_path: Path):
+        """初始化加群请求记录数据库。
 
         Args:
             plugin_data_path (Path): 插件数据目录。
+
+        Returns:
+            GroupRequestLog: 加群请求记录数据库实例。若初始化失败返回 None。
         """
         try:
-            self.plugin_data_path = plugin_data_path
-            self.db_path = (
-                self.plugin_data_path / "group_request_review" / "log.db"
-            )
-            self.db_path.parent.mkdir(parents=True, exist_ok=True)
-        except Exception:
-            logger.exception("初始化加群请求记录时发生错误。")
-
-    async def initialize(self):
-        """初始化数据库表。"""
-        try:
-            async with aiosqlite.connect(self.db_path) as db:
+            log = cls(plugin_data_path)
+            async with aiosqlite.connect(log.db_path) as db:
                 await db.execute("""
                     CREATE TABLE IF NOT EXISTS request_log (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,8 +45,10 @@ class GroupRequestLog:
                 """)
                 await db.commit()
             logger.info("加群请求记录系统初始化完成。")
+            return log
         except Exception:
-            logger.exception("初始化加群请求记录时发生错误。")
+            logger.exception("初始化加群请求记录数据库时发生错误。")
+            return None
 
     async def add_request(self, user_id: str) -> bool:
         """写入加群请求记录。
