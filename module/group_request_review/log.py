@@ -7,7 +7,7 @@ from datetime import datetime
 class GroupRequestLog:
     """加群请求记录。"""
 
-    db_path: Path = None
+    db_path = None
     """数据库文件路径。"""
 
     def __init__(self, plugin_data_path: Path):
