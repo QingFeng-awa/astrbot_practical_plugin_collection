@@ -1,11 +1,9 @@
-from astrbot.api.star import Context, Star
+from astrbot.api.star import Context, Star, StarTools
 from astrbot.api import logger, AstrBotConfig
 from astrbot.api.event import filter, AstrMessageEvent
 from .core import BanSystem
 from .module import handle_request_review
 from .module.group_request_review.log import GroupRequestLog
-from pathlib import Path
-from astrbot.core.utils.astrbot_path import get_astrbot_data_path
 from typing import cast
 
 
@@ -18,9 +16,7 @@ class PracticalPluginCollection(Star):
         """插件配置。"""
         self.module_config = cast(dict, self.config["ModuleConfig"])
         """插件模块配置。"""
-        self.plugin_data_path = (
-            Path(get_astrbot_data_path()) / "plugin_data" / self.name
-        )
+        self.plugin_data_path = StarTools.get_data_dir() / self.name
         """插件数据目录。"""
 
     async def initialize(self):
