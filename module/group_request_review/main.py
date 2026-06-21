@@ -134,7 +134,7 @@ async def _handle_request(
         bool: 如果拒绝成功则返回 True，否则返回 False。
     """
     try:
-        if not check_self_role(event, event.get_group_id())[0]:
+        if not await check_self_role(event, event.get_group_id())[0]:
             logger.error(
                 "机器人身份校验失败。机器人不是当前群聊管理员，无法处理加群请求。"
             )
