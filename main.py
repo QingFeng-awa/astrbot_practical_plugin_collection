@@ -67,5 +67,8 @@ class PracticalPluginCollection(Star):
             )
         elif user_id:  # 私聊
             return user_id in whitelist_config["WhitelistFriends"]
-        else:  # 群聊
+        elif group_id:  # 群聊
             return group_id in whitelist_config["WhitelistGroups"]
+        else:
+            logger.warning("判断事件类型失败，将忽略此条事件。")
+            return False
