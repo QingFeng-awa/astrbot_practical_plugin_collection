@@ -15,7 +15,6 @@ class ProtocolEndApi:
         sub_type: Literal["invite", "add"],
         approve: bool,
         reason: str = "",
-        # count: int = 100,
     ):
         """## 处理加群请求
 
