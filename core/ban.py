@@ -10,16 +10,24 @@ class BanSystem:
     db_path: Path = None
     """数据库文件路径。"""
 
-    async def __init__(self, plugin_data_path: Path):
+    def __init__(self, plugin_data_path: Path):
+        """**请使用 BanSystem.init 方法初始化封禁系统。**"""
+        self.plugin_data_path = plugin_data_path
+        self.db_path = self.plugin_data_path / "ban.db"
+
+    @classmethod
+    async def init(cls, plugin_data_path: Path):
         """初始化封禁系统。
 
         Args:
             plugin_data_path (Path): 插件数据目录。
+
+        Returns:
+            BanSystem: 封禁系统实例。若初始化失败则返回 None。
         """
         try:
-            self.plugin_data_path = plugin_data_path
-            self.db_path = self.plugin_data_path / "ban.db"
-            async with aiosqlite.connect(self.db_path) as db:
+            ban_system = cls(plugin_data_path)
+            async with aiosqlite.connect(ban_system.db_path) as db:
                 await db.execute("""
                     CREATE TABLE IF NOT EXISTS banlist (
                         user_id TEXT PRIMARY KEY,
@@ -51,8 +59,10 @@ class BanSystem:
                 """)
                 await db.commit()
             logger.info("封禁系统初始化完成。")
+            return ban_system
         except Exception:
             logger.exception("初始化封禁系统时发生错误。")
+            return None
 
     async def get_banlist(self) -> list[dict]:
         """获取封禁列表。

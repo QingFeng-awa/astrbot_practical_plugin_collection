@@ -30,7 +30,7 @@ class PracticalPluginCollection(Star):
                 "插件全局开关已关闭，将不会进行任何操作。如果这不是预期行为，请检查你的插件配置。"
             )
         else:
-            self.ban_system = BanSystem(self.plugin_data_path)
+            self.ban_system = await BanSystem.init(self.plugin_data_path)
             self.group_request_log = GroupRequestLog(self.plugin_data_path)
             await self.group_request_log.initialize()
             logger.info("插件初始化完成。")
@@ -45,7 +45,10 @@ class PracticalPluginCollection(Star):
         if not self._event_filter(event, self.config["Whitelist"]):
             return
         await handle_request_review(
-            event, self.module_config["GroupRequestReview"], self.ban_system, self.group_request_log
+            event,
+            self.module_config["GroupRequestReview"],
+            self.ban_system,
+            self.group_request_log,
         )
 
     def _event_filter(self, event: AstrMessageEvent, whitelist_config: dict) -> bool:
