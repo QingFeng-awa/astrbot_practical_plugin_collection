@@ -188,3 +188,20 @@ class BanSystem:
             )
             rows = await cursor.fetchall()
             return [dict(row) for row in rows]
+
+    async def check_user_is_banned(self, user_id: str) -> bool:
+        """检查指定用户是否被封禁。
+
+        Args:
+            user_id (str): 要检查的用户 ID。
+
+        Returns:
+            bool: 如果用户被封禁则返回 True，否则返回 False。
+        """
+        async with aiosqlite.connect(self.db_path) as db:
+            cursor = await db.execute(
+                "SELECT * FROM banlist WHERE user_id = ?",
+                (user_id,),
+            )
+            row = await cursor.fetchone()
+            return row is not None

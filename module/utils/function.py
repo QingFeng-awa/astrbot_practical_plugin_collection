@@ -1,23 +1,6 @@
-from . import BanSystem, ProtocolEndApi
+from . import ProtocolEndApi
 from astrbot.api.event import AstrMessageEvent
 from astrbot.api import logger
-
-
-async def check_user_is_banned(user_id: str, ban_system: BanSystem) -> bool:
-    """检查用户是否被封禁。
-
-    Args:
-        user_id (str): 要检查的用户 ID。
-        ban_system (BanSystem): 封禁系统实例。
-
-    Returns:
-        bool: 是否被封禁。
-    """
-    user_id = user_id.strip()
-    for uid in await ban_system.get_banlist():
-        if uid == user_id:
-            return True
-    return False
 
 
 async def check_self_role(event: AstrMessageEvent, group_id: str) -> tuple[bool, bool]:

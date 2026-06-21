@@ -6,7 +6,6 @@ from typing import cast
 from ..utils import (
     event_filter,
     BanSystem,
-    check_user_is_banned,
     ProtocolEndApi,
     check_self_role,
 )
@@ -58,7 +57,7 @@ async def handle_request_review(
     # 主要判断逻辑部分
     message_template = cast(dict, module_config["MessageTemplate"])
     if group_config["UseBanlist"]:
-        if await check_user_is_banned(user_id, ban_system):
+        if await ban_system.check_user_is_banned(user_id):
             logger.info(f"用户 {user_id} 已被封禁，将拒绝其加群请求。")
             await _handle_request(
                 event, request_flag, False, message_template["RejectByBanned"]
