@@ -14,7 +14,9 @@ class GroupRequestLog:
         """**请使用 GroupRequestLog.init 方法初始化加群请求记录数据库。**"""
         try:
             self.plugin_data_path = plugin_data_path
-            self.db_path = self.plugin_data_path / "group_request_review" / "log.db"
+            self.db_path = (
+                self.plugin_data_path / "module" / "group_request_review" / "log.db"
+            )
             self.db_path.parent.mkdir(parents=True, exist_ok=True)
         except Exception:
             logger.exception("初始化加群请求记录数据库时发生错误。")

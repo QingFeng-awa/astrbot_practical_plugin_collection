@@ -13,7 +13,7 @@ class BanSystem:
     def __init__(self, plugin_data_path: Path):
         """**请使用 BanSystem.init 方法初始化封禁系统。**"""
         self.plugin_data_path = plugin_data_path
-        self.db_path = self.plugin_data_path / "ban.db"
+        self.db_path = self.plugin_data_path / "core" / "ban.db"
 
     @classmethod
     async def init(cls, plugin_data_path: Path):
@@ -29,7 +29,7 @@ class BanSystem:
             ban_system = cls(plugin_data_path)
             async with aiosqlite.connect(ban_system.db_path) as db:
                 await db.execute("""
-                    CREATE TABLE IF NOT EXISTS banlist (
+                    CREATE TABLE IF NOT EXISTS ban_list (
                         user_id TEXT PRIMARY KEY,
                         group_id TEXT NOT NULL DEFAULT '',
                         operator TEXT NOT NULL,
@@ -39,7 +39,7 @@ class BanSystem:
                     )
                 """)
                 await db.execute("""
-                    CREATE TABLE IF NOT EXISTS banned_log (
+                    CREATE TABLE IF NOT EXISTS ban_log (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         user_id TEXT NOT NULL,
                         group_id TEXT NOT NULL DEFAULT '',
@@ -50,7 +50,7 @@ class BanSystem:
                     )
                 """)
                 await db.execute("""
-                    CREATE TABLE IF NOT EXISTS banlog (
+                    CREATE TABLE IF NOT EXISTS action_log (
                         action TEXT NOT NULL,
                         user_id TEXT NOT NULL,
                         operator TEXT NOT NULL,
@@ -64,7 +64,7 @@ class BanSystem:
             logger.exception("初始化封禁系统时发生错误。")
             return None
 
-    async def get_banlist(self) -> list[dict]:
+    async def get_ban_list(self) -> list[dict]:
         """获取封禁列表。
 
         Returns:
@@ -82,7 +82,7 @@ class BanSystem:
         """
         async with aiosqlite.connect(self.db_path) as db:
             db.row_factory = aiosqlite.Row
-            cursor = await db.execute("SELECT * FROM banlist")
+            cursor = await db.execute("SELECT * FROM ban_list")
             rows = await cursor.fetchall()
             return [dict(row) for row in rows]
 
@@ -110,17 +110,17 @@ class BanSystem:
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             async with aiosqlite.connect(self.db_path) as db:
                 await db.execute(
-                    """INSERT OR REPLACE INTO banlist (user_id, group_id, operator, reason, duration, time)
+                    """INSERT OR REPLACE INTO ban_list (user_id, group_id, operator, reason, duration, time)
                     VALUES (?, ?, ?, ?, ?, ?)""",
                     (user_id, group_id, operator, reason, duration, now),
                 )
                 await db.execute(
-                    """INSERT INTO banned_log (user_id, group_id, operator, reason, duration, time)
+                    """INSERT INTO ban_log (user_id, group_id, operator, reason, duration, time)
                     VALUES (?, ?, ?, ?, ?, ?)""",
                     (user_id, group_id, operator, reason, duration, now),
                 )
                 await db.execute(
-                    "INSERT INTO banlog (action, user_id, operator, time) VALUES ('ban', ?, ?, ?)",
+                    "INSERT INTO action_log (action, user_id, operator, time) VALUES ('ban', ?, ?, ?)",
                     (user_id, operator, now),
                 )
                 await db.commit()
@@ -146,11 +146,11 @@ class BanSystem:
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             async with aiosqlite.connect(self.db_path) as db:
                 await db.execute(
-                    "DELETE FROM banlist WHERE user_id = ?",
+                    "DELETE FROM ban_list WHERE user_id = ?",
                     (user_id,),
                 )
                 await db.execute(
-                    "INSERT INTO banlog (action, user_id, operator, time) VALUES ('unban', ?, ?, ?)",
+                    "INSERT INTO action_log (action, user_id, operator, time) VALUES ('unban', ?, ?, ?)",
                     (user_id, operator, now),
                 )
                 await db.commit()
@@ -160,7 +160,7 @@ class BanSystem:
             logger.exception(f"解除用户 {user_id} 的封禁时发生错误。")
             return False
 
-    async def get_banned_log(self, user_id: str) -> list[dict]:
+    async def get_ban_log(self, user_id: str) -> list[dict]:
         """查询指定用户的封禁历史记录。
 
         Args:
@@ -183,7 +183,7 @@ class BanSystem:
         async with aiosqlite.connect(self.db_path) as db:
             db.row_factory = aiosqlite.Row
             cursor = await db.execute(
-                "SELECT * FROM banned_log WHERE user_id = ?",
+                "SELECT * FROM ban_log WHERE user_id = ?",
                 (user_id,),
             )
             rows = await cursor.fetchall()
@@ -200,7 +200,7 @@ class BanSystem:
         """
         async with aiosqlite.connect(self.db_path) as db:
             cursor = await db.execute(
-                "SELECT * FROM banlist WHERE user_id = ?",
+                "SELECT * FROM ban_list WHERE user_id = ?",
                 (user_id,),
             )
             row = await cursor.fetchone()
