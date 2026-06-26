@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astrbot.app/schemas/plugin-metadata.json",
+  "title": "AstrBot 插件元数据",
+  "description": "AstrBot 插件 metadata.yaml 文件的 JSON Schema 定义。（此配置由 DeepSeek v4 Pro 基于 AstrBot v4.26.1 生成）",
+  "type": "object",
+  "required": [
+    "name",
+    "version",
+    "author"
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "desc"
+      ]
+    },
+    {
+      "required": [
+        "description"
+      ]
+    }
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "插件名称。必须为合法的 Python 标识符（非关键字），不能包含路径分隔符（/ 或 \\）。推荐以 astrbot_plugin_ 开头，全部小写，不含空格。",
+      "pattern": "^[a-z_][a-z0-9_]*$",
+      "minLength": 1
+    },
+    "desc": {
+      "type": "string",
+      "description": "插件简介/描述。",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "description": "插件简介/描述。desc 的别名字段，当 desc 不存在时会被使用。推荐优先使用 desc。",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "description": "插件版本号，推荐遵循语义化版本规范（SemVer）。",
+      "minLength": 1
+    },
+    "author": {
+      "type": "string",
+      "description": "插件作者。",
+      "minLength": 1
+    },
+    "repo": {
+      "type": "string",
+      "description": "插件仓库地址（GitHub URL 等）。",
+      "format": "uri"
+    },
+    "short_desc": {
+      "type": "string",
+      "description": "插件短描述，用于插件市场卡片展示。适合写一句简短介绍；未提供时回退显示 desc。"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "插件展示名，用于插件市场等场景中向用户展示。支持通过 .astrbot-plugin/i18n/ 目录实现国际化。"
+    },
+    "support_platforms": {
+      "type": "array",
+      "description": "插件声明支持的平台适配器 ID 列表。值需为 ADAPTER_NAME_2_TYPE 中的 key。",
+      "items": {
+        "type": "string",
+        "enum": [
+          "aiocqhttp",
+          "qq_official",
+          "qq_official_webhook",
+          "telegram",
+          "wecom",
+          "wecom_ai_bot",
+          "lark",
+          "dingtalk",
+          "discord",
+          "slack",
+          "kook",
+          "vocechat",
+          "weixin_official_account",
+          "weixin_oc",
+          "satori",
+          "misskey",
+          "line",
+          "matrix",
+          "mattermost",
+          "webchat"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "astrbot_version": {
+      "type": "string",
+      "description": "插件要求的 AstrBot 版本范围，使用 PEP 440 版本约束格式（不带 v 前缀）。当当前 AstrBot 版本不满足时，插件会被阻止加载。示例：'>=4.16,<5'、'~=4.17'、'>=4.17.0'。",
+      "pattern": "^[^v]"
+    },
+    "pages": {
+      "type": "array",
+      "description": "插件注册的 Web 页面元数据列表。每个元素为一个描述页面属性的对象。",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "页面名称，对应 pages/ 目录下的子目录名。"
+          },
+          "title": {
+            "type": "string",
+            "description": "页面标题。"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}
