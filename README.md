@@ -23,6 +23,7 @@ PracticalPluginCollection 是 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 
   - [ ] 今日人品（daily_luck）
   - [ ] 我超，盒！（box）
   - [ ] B 站链接解析（bilibili_link_parser）
+  - [ ] 赞我（send_like）
   - And More...
 
 ## 为什么？
