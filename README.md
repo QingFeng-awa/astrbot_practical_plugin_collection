@@ -28,9 +28,9 @@ PracticalPluginCollection 是 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 
 
 ## 为什么？
 
-原本我是使用 ZeroBot-Plugin (zbp) 的，这个项目是一个 ZeroBot 插件合集，集成了大量插件。\
-但毕竟 zbp 是基于 ZeroBot 的，而我更希望使用 AstrBot，我不喜欢同时接入多个机器人框架，容易导致机器人左右脑互搏（功能冲突）；zbp 还将仓库分为了超多仓库/module，可能开发团队这么做有他们的用意，但恕我无法接受改一个功能要翻几个仓库。\
-此外 zbp 几乎把日志功能当空气，项目几乎没有日志记录，出现错误直接将错误信息发送给用户，好比：
+原本我是使用 ZeroBot-Plugin (zbp) 的，这个项目是一个 ZeroBot 插件合集，集成了大量插件，从结果来看我其实很认可这个项目。\
+但遗憾的是 zbp 毕竟是基于 ZeroBot 而非 AstrBot，我是不喜欢同时使用两个框架的。\
+此外 zbp 让我无法接受的点是将一个项目分为了超多仓库/module，可能开发团队这么做确有他们的用意，但恕我无法接受改一个功能要翻几个仓库。而且 zbp 还几乎把日志功能当空气，项目几乎没有日志记录，出现错误直接将错误信息发送给用户，好比：
 ```py
 except Exception as e:
     await event.send(e)
