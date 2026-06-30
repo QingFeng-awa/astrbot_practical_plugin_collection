@@ -5,6 +5,7 @@ from .core import BanSystem, EconomicSystem
 from .module import handle_request_review
 from .module.group_request_review.log import GroupRequestLog
 from typing import cast
+from .utils.message import MessageTemplate
 
 
 class PracticalPluginCollection(Star):
@@ -32,7 +33,8 @@ class PracticalPluginCollection(Star):
                 "插件全局开关已关闭，将不会进行任何操作。如果这不是预期行为，请检查你的插件配置。"
             )
         else:
-            self.ban_system = await BanSystem.init(self.plugin_data_path)
+            self.msg_template = MessageTemplate(self.config["MessageTemplate"])
+            self.ban_system = BanSystem(self.config, self.msg_template)
             self.economic_system = await EconomicSystem.init(self.plugin_data_path)
             self.group_request_log = await GroupRequestLog.init(self.plugin_data_path)
             logger.info("插件初始化完成。")
@@ -90,23 +92,25 @@ class PracticalPluginCollection(Star):
         """封禁系统功能命令组。"""
 
     @ban.command("add")
-    async def add_ban(
-        self, event: AstrMessageEvent, user_id: int, reason: str = "", duration: int = 0
-    ):
-        """添加封禁。"""
+    async def add_ban(self, event: AstrMessageEvent, user_id: int, reason: str = ""):
+        """新增封禁用户。"""
         try:
-            async for result in self.ban_system.add(event, user_id, reason, duration):
-                yield result
+            yield self.ban_system.add(event, user_id, reason)
         except Exception:
-            logger.exception(
-                f"处理命令 `/ban add {user_id} {reason} {duration}` 时发生错误。"
-            )
+            logger.exception(f"处理命令 `/ban add {user_id} {reason}` 时发生错误。")
 
     @ban.command("remove")
     async def remove_ban(self, event: AstrMessageEvent, user_id: int):
         """解封给定用户。"""
         try:
-            async for result in self.ban_system.remove(event, user_id):
-                yield result
+            yield self.ban_system.remove(event, user_id)
         except Exception:
             logger.exception(f"处理命令 `/ban remove {user_id}` 时发生错误。")
+
+    @ban.command("list")
+    async def list_ban(self, event: AstrMessageEvent):
+        """列出所有封禁用户。"""
+        try:
+            yield self.ban_system.list(event)
+        except Exception:
+            logger.exception("处理命令 `/ban list` 时发生错误。")

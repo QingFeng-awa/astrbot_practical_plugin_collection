@@ -1,45 +1,119 @@
-from .db import BanSystemDataBase
-from astrbot.api.event import AstrMessageEvent
-from astrbot.api import logger
+from .main import BanSystemCore
+from astrbot.api.event import AstrMessageEvent, MessageEventResult
+from astrbot.api import AstrBotConfig, logger
+from ...utils.message import MessageTemplate
 
 
-class BanSystem(BanSystemDataBase):
+class BanSystem(BanSystemCore):
     """封禁系统。"""
 
-    async def add(
-        self, event: AstrMessageEvent, user_id: int, reason: str = "", duration: int = 0
-    ):
-        """封禁给定用户。
+    msg_template = None
+    """消息模板类。"""
+    config = None
+    """插件配置对象。"""
+
+    def __init__(self, config: AstrBotConfig, msg_template: MessageTemplate):
+        """初始化封禁系统。
+
+        Args:
+            config (AstrBotConfig): 插件配置对象。
+            msg_template (MessageTemplate): 消息模板类。
+        """
+        super().__init__(config["CoreConfig"]["BanSystem"])
+        self.msg_template = msg_template
+        self.config = config
+
+    def add(
+        self,
+        event: AstrMessageEvent,
+        user_id: str,
+        reason: str = "",
+    ) -> MessageEventResult:
+        """添加封禁用户。
 
         Args:
             event (AstrMessageEvent): 消息事件对象。
-            user_id (int): 要封禁的用户ID。
-            reason (str, optional): 封禁原因。 Defaults to "".
-            duration (int, optional): 封禁时长，单位为分钟，默认为 `0` 即永久封禁。
+            user_id (str): 用户 ID。
+            reason (str, optional): 封禁原因。
+
+        Returns:
+            MessageEventResult: 封禁结果消息事件结果，调用方应通过 `yield` 使 AstrBot 消费此结果。
         """
         try:
-            await self.add_ban(
-                user_id, event.get_group_id(), event.get_sender_id(), reason, duration
+            self.add_ban(user_id, reason)
+            self.config.save_config()
+            return event.plain_result(
+                self.msg_template.get_msg_template(
+                    "BanSystem", "AddNewBan", user_id=user_id
+                )
             )
-            yield event.plain_result(f"封禁 {user_id} 成功。")
-            return
         except Exception:
-            logger.exception(f"封禁用户 {user_id} 时发生错误。")
-            yield event.plain_result("封禁用户时发生意外错误，请重试。")
-            return
+            logger.exception("添加封禁用户时发生错误。")
+            raise
 
-    async def remove(self, event: AstrMessageEvent, user_id: int):
-        """解封给定用户。
+    def remove(
+        self,
+        event: AstrMessageEvent,
+        user_id: str,
+    ) -> MessageEventResult:
+        """移除封禁用户。
 
         Args:
             event (AstrMessageEvent): 消息事件对象。
-            user_id (int): 要解封的用户ID。
+            config (AstrBotConfig): 插件配置对象。
+            user_id (str): 用户 ID。
+
+        Returns:
+            MessageEventResult: 封禁结果消息事件结果，调用方应通过 `yield` 使 AstrBot 消费此结果。
         """
         try:
-            await self.del_ban(user_id, event.get_sender_id())
-            yield event.plain_result(f"解封 {user_id} 成功。")
-            return
+            self.remove_ban(user_id)
+            self.config.save_config()
+            return event.plain_result(
+                self.msg_template.get_msg_template(
+                    "BanSystem", "RemoveBan", user_id=user_id
+                )
+            )
         except Exception:
-            logger.exception(f"解封用户 {user_id} 时发生错误。")
-            yield event.plain_result("解封用户时发生意外错误，请重试。")
-            return
+            logger.exception("移除封禁用户时发生错误。")
+            raise
+
+    def list(
+        self,
+        event: AstrMessageEvent,
+    ) -> MessageEventResult:
+        """列出封禁用户列表。
+
+        Args:
+            event (AstrMessageEvent): 消息事件对象。
+
+        Returns:
+            MessageEventResult: 封禁结果消息事件结果，调用方应通过 `yield` 使 AstrBot 消费此结果。
+        """
+        try:
+            banlist = self.list_ban()
+            if not banlist:
+                return event.plain_result(
+                    self.msg_template.get_msg_template("BanSystem", "BanlistEmpty")
+                )
+            banlist_lines = []
+            for item in banlist:
+                user_id = item["User"]
+                reason = item.get("Reason") or "无"
+                banlist_lines.append(
+                    self.msg_template.get_msg_template(
+                        "BanSystem",
+                        "BanlistFormat",
+                        user_id=user_id,
+                        reason=reason,
+                    )
+                )
+            banlist_str = "".join(banlist_lines)
+            return event.plain_result(
+                self.msg_template.get_msg_template(
+                    "BanSystem", "ListBan", banlist=banlist_str
+                )
+            )
+        except Exception:
+            logger.exception("列出封禁用户列表时发生错误。")
+            raise

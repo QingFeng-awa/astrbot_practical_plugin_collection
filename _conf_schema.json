@@ -33,6 +33,42 @@
         "hint": "是否启用插件，关闭后插件将不会进行任何操作也不会响应任何事件。此项默认关闭以防止插件安装后被自动启动。建议在配置完所有模块后再打开。",
         "default": false
     },
+    "CoreConfig": {
+        "type": "object",
+        "description": "核心功能配置",
+        "items": {
+            "BanSystem": {
+                "type": "object",
+                "description": "封禁系统配置",
+                "items": {
+                    "Banlist": {
+                        "type": "template_list",
+                        "description": "封禁列表",
+                        "templates": {
+                            "SingleBan": {
+                                "name": "单一封禁",
+                                "hint": "封禁单个用户。",
+                                "display_item": "User",
+                                "hide_hint_in_list": true,
+                                "items": {
+                                    "User": {
+                                        "type": "string",
+                                        "description": "封禁目标",
+                                        "hint": "要封禁的目标账号 ID。"
+                                    },
+                                    "Reason": {
+                                        "type": "string",
+                                        "description": "封禁原因",
+                                        "hint": "可选，用于记录封禁原因以防被忘了。"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
     "ModuleConfig": {
         "type": "object",
         "description": "模块配置",
@@ -266,6 +302,43 @@
                                 "default": "您的答案不符合要求，请重新填写。"
                             }
                         }
+                    }
+                }
+            }
+        }
+    },
+    "MessageTemplate": {
+        "type": "object",
+        "description": "消息模板配置",
+        "items": {
+            "BanSystem": {
+                "type": "object",
+                "description": "封禁系统",
+                "items": {
+                    "AddNewBan": {
+                        "type": "string",
+                        "description": "添加新封禁用户成功时显示的信息，可用占位符有 {user_id}。",
+                        "default": "封禁用户 {user_id} 成功。"
+                    },
+                    "RemoveBan": {
+                        "type": "string",
+                        "description": "移除封禁用户成功时显示的信息，可用占位符有 {user_id}。",
+                        "default": "移除封禁用户 {user_id} 成功。"
+                    },
+                    "ListBan": {
+                        "type": "string",
+                        "description": "列出封禁用户列表时显示的信息，可用占位符有 {banlist}。",
+                        "default": "当前封禁用户列表：{banlist}"
+                    },
+                    "BanlistFormat": {
+                        "type": "string",
+                        "description": "每行封禁用户列表的显示格式，可用占位符有 {user_id}, {reason}。",
+                        "default": "\n- 用户 ID：{user_id}，封禁理由：{reason}。"
+                    },
+                    "BanlistEmpty": {
+                        "type": "string",
+                        "description": "当没有任何人被封禁时显示的信息。",
+                        "default": "当前封禁列表为空。"
                     }
                 }
             }
