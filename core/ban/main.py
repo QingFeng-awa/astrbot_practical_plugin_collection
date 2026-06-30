@@ -1,4 +1,5 @@
 from typing import cast
+from astrbot.api import logger
 
 
 class BanSystemCore:
@@ -28,6 +29,9 @@ class BanSystemCore:
         Returns:
             bool: 是否请求保存配置。当此值为 True 时，调用处应当调用 `config.save_config` 方法保存配置以使封禁列表真正被写入。
         """
+        if any(item["User"] == user_id for item in self.ban_list):
+            logger.info(f"用户 {user_id} 已被封禁，无需重复添加。")
+            return False
         self.ban_list.append(
             {"__template_key": "SingleBan", "User": user_id, "Reason": reason}
         )

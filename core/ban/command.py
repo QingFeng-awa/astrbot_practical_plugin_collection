@@ -40,13 +40,19 @@ class BanSystem(BanSystemCore):
             MessageEventResult: 封禁结果消息事件结果，调用方应通过 `yield` 使 AstrBot 消费此结果。
         """
         try:
-            self.add_ban(user_id, reason)
-            self.config.save_config()
-            return event.plain_result(
-                self.msg_template.get_msg_template(
-                    "BanSystem", "AddNewBan", user_id=user_id
+            if self.add_ban(user_id, reason):
+                self.config.save_config()
+                return event.plain_result(
+                    self.msg_template.get_msg_template(
+                        "BanSystem", "AddNewBan", user_id=user_id
+                    )
                 )
-            )
+            else:
+                return event.plain_result(
+                    self.msg_template.get_msg_template(
+                        "BanSystem", "AddBanFailed", user_id=user_id
+                    )
+                )
         except Exception:
             logger.exception("添加封禁用户时发生错误。")
             raise

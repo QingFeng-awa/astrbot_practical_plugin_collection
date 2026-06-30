@@ -320,6 +320,11 @@
                         "description": "添加新封禁用户成功时显示的信息，可用占位符有 {user_id}。",
                         "default": "封禁用户 {user_id} 成功。"
                     },
+                    "DuplicateBan": {
+                        "type": "string",
+                        "description": "添加已存在封禁用户时显示的信息，可用占位符有 {user_id}。",
+                        "default": "用户 {user_id} 已被封禁，无需重复添加。"
+                    },
                     "RemoveBan": {
                         "type": "string",
                         "description": "移除封禁用户成功时显示的信息，可用占位符有 {user_id}。",
