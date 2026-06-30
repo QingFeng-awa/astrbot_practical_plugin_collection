@@ -92,7 +92,7 @@ class PracticalPluginCollection(Star):
         """封禁系统功能命令组。"""
 
     @ban.command("add")
-    async def add_ban(self, event: AstrMessageEvent, user_id: int, reason: str = ""):
+    async def add_ban(self, event: AstrMessageEvent, user_id: str, reason: str = ""):
         """新增封禁用户。"""
         try:
             yield self.ban_system.add(event, user_id, reason)
@@ -100,7 +100,7 @@ class PracticalPluginCollection(Star):
             logger.exception(f"处理命令 `/ban add {user_id} {reason}` 时发生错误。")
 
     @ban.command("remove")
-    async def remove_ban(self, event: AstrMessageEvent, user_id: int):
+    async def remove_ban(self, event: AstrMessageEvent, user_id: str):
         """解封给定用户。"""
         try:
             yield self.ban_system.remove(event, user_id)
