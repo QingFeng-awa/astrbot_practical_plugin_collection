@@ -1,7 +1,8 @@
-from .main import BanSystemCore
-from astrbot.api.event import AstrMessageEvent, MessageEventResult
 from astrbot.api import AstrBotConfig, logger
+from astrbot.api.event import AstrMessageEvent, MessageEventResult
+
 from ...utils.message import MessageTemplate
+from .main import BanSystemCore
 
 
 class BanSystem(BanSystemCore):

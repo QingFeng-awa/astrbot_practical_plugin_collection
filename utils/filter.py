@@ -1,6 +1,7 @@
+from typing import Literal, cast
+
 from astrbot.api import logger
 from astrbot.api.event import AstrMessageEvent
-from typing import Literal, cast
 
 
 def event_filter(

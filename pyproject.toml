@@ -9,6 +9,7 @@ license-files = ["LICENSE"]
 dependencies = [
     "aiosqlite>=0.22.1",
     "astrbot>=4.17.6",
+    "isort>=8.0.1",
 ]
 
 [dependency-groups]

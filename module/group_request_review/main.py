@@ -1,12 +1,14 @@
-from astrbot.api import logger
-from astrbot.api.event import AstrMessageEvent
-from typing import cast
-from ...utils import event_filter, check_self_role
-from ...utils.api import ProtocolEndApi
-from ...core import BanSystem
 import math
 import re
 from datetime import datetime, timedelta
+from typing import cast
+
+from astrbot.api import logger
+from astrbot.api.event import AstrMessageEvent
+
+from ...core import BanSystem
+from ...utils import check_self_role, event_filter
+from ...utils.api import ProtocolEndApi
 from ...utils.message import MessageTemplate
 from .log import GroupRequestLog
 
@@ -174,9 +176,8 @@ async def _handle_request(
                 "机器人身份校验失败。机器人不是当前群聊管理员，无法处理加群请求。"
             )
             return False
-        from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import (
-            AiocqhttpMessageEvent,
-        )
+        from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import \
+            AiocqhttpMessageEvent
 
         assert isinstance(event, AiocqhttpMessageEvent)
         await ProtocolEndApi.set_group_add_request(

@@ -1,5 +1,6 @@
-from astrbot.api import logger
 from typing import cast
+
+from astrbot.api import logger
 
 
 class MessageTemplate:
