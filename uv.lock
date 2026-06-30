@@ -266,11 +266,11 @@ source = { virtual = "." }
 dependencies = [
     { name = "aiosqlite" },
     { name = "astrbot" },
-    { name = "isort" },
 ]
 
 [package.dev-dependencies]
 dev = [
+    { name = "isort" },
     { name = "ruff" },
 ]
 
@@ -278,11 +278,13 @@ dev = [
 requires-dist = [
     { name = "aiosqlite", specifier = ">=0.22.1" },
     { name = "astrbot", specifier = ">=4.17.6" },
-    { name = "isort", specifier = ">=8.0.1" },
 ]
 
 [package.metadata.requires-dev]
-dev = [{ name = "ruff", specifier = ">=0.15.13" }]
+dev = [
+    { name = "isort", specifier = ">=8.0.1" },
+    { name = "ruff", specifier = ">=0.15.13" },
+]
 
 [[package]]
 name = "attrs"
