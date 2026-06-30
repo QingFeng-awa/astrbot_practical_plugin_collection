@@ -176,8 +176,9 @@ async def _handle_request(
                 "机器人身份校验失败。机器人不是当前群聊管理员，无法处理加群请求。"
             )
             return False
-        from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import \
-            AiocqhttpMessageEvent
+        from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import (
+            AiocqhttpMessageEvent,
+        )
 
         assert isinstance(event, AiocqhttpMessageEvent)
         await ProtocolEndApi.set_group_add_request(

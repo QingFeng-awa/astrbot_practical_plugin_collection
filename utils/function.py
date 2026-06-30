@@ -15,8 +15,9 @@ async def check_self_role(event: AstrMessageEvent, group_id: str) -> tuple[bool,
         tuple[bool, bool]: 是否是管理员，是否是群主。
     """
     try:
-        from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import \
-            AiocqhttpMessageEvent
+        from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import (
+            AiocqhttpMessageEvent,
+        )
 
         assert isinstance(event, AiocqhttpMessageEvent)
         self_id = event.get_self_id()
