@@ -1,12 +1,9 @@
 from astrbot.api import logger
 from astrbot.api.event import AstrMessageEvent
 from typing import cast
-from ..utils import (
-    event_filter,
-    BanSystem,
-    ProtocolEndApi,
-    check_self_role,
-)
+from ...utils import event_filter, check_self_role
+from ...utils.api import ProtocolEndApi
+from ...core import BanSystem
 import math
 import re
 from datetime import datetime, timedelta
